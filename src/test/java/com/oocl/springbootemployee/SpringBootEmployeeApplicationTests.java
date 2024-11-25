@@ -2,6 +2,7 @@ package com.oocl.springbootemployee;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import com.oocl.springbootemployee.enums.Gender;
 import com.oocl.springbootemployee.model.Employee;
@@ -34,6 +35,10 @@ class SpringBootEmployeeApplicationTests {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    @Autowired
+    private JacksonTester<List<Employee>> employeesJacksonTester;
+
     List<Employee> employees;
 
 
@@ -53,12 +58,16 @@ class SpringBootEmployeeApplicationTests {
         //When
 
         //Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employees.get(2).getName()));
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<Employee> responseEmployees = employeesJacksonTester.parse(responseJson).getObject();
+        assertEquals(3, responseEmployees.size());
+
+        assertIterableEquals(employees, responseEmployees);
     }
 
 
@@ -122,14 +131,12 @@ class SpringBootEmployeeApplicationTests {
     @Test
     void should_update_employee_age_and_salary_when_update_employee_given_age_and_salary() throws Exception {
         //Given
-
         String givenEmployee = "{\n" +
                 "    \"age\": 30,\n" +
                 "    \"salary\": 8000.0\n" +
                 "}";
 
         Integer id = 1;
-
         //When
 
         //Then

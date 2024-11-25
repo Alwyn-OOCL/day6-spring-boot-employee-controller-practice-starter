@@ -1,6 +1,7 @@
 package com.oocl.springbootemployee.model;
 
 import com.oocl.springbootemployee.enums.Gender;
+import java.util.Objects;
 
 public class Employee {
     private Integer id;
@@ -59,5 +60,23 @@ public class Employee {
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id) && Objects.equals(name, employee.name) && Objects.equals(age, employee.age) && gender == employee.gender
+                && Objects.equals(salary, employee.salary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, gender, salary);
     }
 }
