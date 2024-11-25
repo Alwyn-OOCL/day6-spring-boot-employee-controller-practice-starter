@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import com.oocl.springbootemployee.enums.Gender;
+import com.oocl.springbootemployee.model.Company;
 import com.oocl.springbootemployee.model.Employee;
+import com.oocl.springbootemployee.repository.CompanyRepository;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
 
 import java.util.ArrayList;
@@ -34,21 +36,26 @@ class SpringBootEmployeeApplicationTests {
     private MockMvc mockMvc;
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Autowired
     private JacksonTester<List<Employee>> employeesJacksonTester;
 
-    List<Employee> employees;
+    @Autowired
+    private JacksonTester<List<Company>> companiesJacksonTester;
+
+    private List<Employee> employees;
+
+    private List<Company> companies;
 
 
     @BeforeEach
     public void setUp() {
-        employees = employeeRepository.getAll();
-        employees.clear();
-        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0));
+        initialEmployees();
+        initialCompanies();
     }
 
     @Test
@@ -162,4 +169,64 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @Test
+    void should_return_Companies_when_get_all_companies() throws Exception {
+        //Given
+
+        //When
+
+        //Then
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/companies"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<Company> responseCompanies = companiesJacksonTester.parse(responseJson).getObject();
+        assertEquals(3, responseCompanies.size());
+
+        assertIterableEquals(companies, responseCompanies);
+    }
+
+    @Test
+    void should_return_employees_when_get_employees_by_company_id_given_company_id() throws Exception {
+        //Given
+        Integer companyId = 1;
+
+        //When
+
+        //Then
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/employees/listByCompanyId/" + companyId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<Employee> responseEmployees = employeesJacksonTester.parse(responseJson).getObject();
+        assertIterableEquals(employees
+                        .stream()
+                        .filter(employee -> employee.getCompanyId().equals(companyId))
+                        .toList(),
+                responseEmployees);
+    }
+
+    private void initialEmployees() {
+        employees = employeeRepository.getAll();
+        employees.clear();
+        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0, 1));
+        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0, 1));
+        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0, 2));
+    }
+
+    private void initialCompanies() {
+        companies = companyRepository.getAll();
+        companies.clear();
+        companies.add(new Company(1, "companyA"));
+        companies.add(new Company(2, "companyB"));
+        companies.add(new Company(3, "companyC"));
+        companies.add(new Company(4, "companyD"));
+        companies.add(new Company(5, "companyE"));
+        companies.add(new Company(6, "companyF"));
+        companies.add(new Company(7, "companyG"));
+    }
 }
