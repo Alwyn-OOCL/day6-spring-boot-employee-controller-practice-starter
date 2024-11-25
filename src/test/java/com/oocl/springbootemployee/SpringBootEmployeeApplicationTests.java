@@ -10,6 +10,7 @@ import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.CompanyRepository;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,6 +209,33 @@ class SpringBootEmployeeApplicationTests {
                         .filter(employee -> employee.getCompanyId().equals(companyId))
                         .toList(),
                 responseEmployees);
+    }
+
+    @Test
+    void should_return_companies_when_getCompaniesByPage_given_page_and_size() throws Exception {
+        //Given
+        Integer page = 1;
+        Integer size = 5;
+
+        //When
+
+        //Then
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/companies")
+                        .param("page", page.toString())
+                        .param("size", size.toString()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<Company> responseCompanies = companiesJacksonTester.parse(responseJson).getObject();
+        assertEquals(5, responseCompanies.size());
+
+        assertIterableEquals(companies.stream()
+                        .skip((page - 1) * size)
+                        .limit(size)
+                        .toList(),
+                responseCompanies);
     }
 
     private void initialEmployees() {
