@@ -22,4 +22,9 @@ public class CompanyController {
         return companyRepository.getAll();
     }
 
+    @GetMapping(params = {"page", "size"})
+    public List<Company> getCompaniesByPage(Integer page, Integer size) {
+        return companyRepository.getCompaniesByPage(page, size);
+    }
+
 }
