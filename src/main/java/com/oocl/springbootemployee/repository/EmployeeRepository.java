@@ -14,9 +14,9 @@ public class EmployeeRepository {
     private final List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
-        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0));
+        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0, 1));
+        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0, 1));
+        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0, 2));
     }
 
     public List<Employee> getAll() {
@@ -52,5 +52,11 @@ public class EmployeeRepository {
     public void deleteEmployee(Integer id) {
         Employee employee = getById(id);
         employees.remove(employee);
+    }
+
+    public List<Employee> listByCompanyId(Integer companyId) {
+        return employees.stream()
+                .filter(employee -> employee.getCompanyId().equals(companyId))
+                .toList();
     }
 }

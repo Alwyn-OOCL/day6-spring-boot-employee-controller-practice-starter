@@ -4,6 +4,7 @@ import com.oocl.springbootemployee.enums.Gender;
 import java.util.Objects;
 
 public class Employee {
+
     private Integer id;
 
     private String name;
@@ -14,12 +15,15 @@ public class Employee {
 
     private Double salary;
 
-    public Employee(Integer id, String name, Integer age, Gender gender, Double salary) {
+    private Integer companyId;
+
+    public Employee(Integer id, String name, Integer age, Gender gender, Double salary, Integer companyId) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.salary = salary;
+        this.companyId = companyId;
     }
 
     public Integer getId() {
@@ -60,6 +64,14 @@ public class Employee {
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 
     @Override

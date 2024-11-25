@@ -49,4 +49,10 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable Integer id){
         employeeRepository.deleteEmployee(id);
     }
+
+    @GetMapping("/listByCompanyId/{companyId}")
+    public List<Employee> listByCompanyId(@PathVariable Integer companyId) {
+        return employeeRepository.listByCompanyId(companyId);
+    }
+
 }
