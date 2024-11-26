@@ -184,7 +184,7 @@ class SpringBootEmployeeApplicationTests {
                 .getContentAsString();
 
         List<Company> responseCompanies = companiesJacksonTester.parse(responseJson).getObject();
-        assertEquals(3, responseCompanies.size());
+        assertEquals(7, responseCompanies.size());
 
         assertIterableEquals(companies, responseCompanies);
     }
